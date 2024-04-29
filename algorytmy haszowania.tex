@@ -1,0 +1,167 @@
+\documentclass[options]{article}
+\usepackage[utf8]{inputenc}
+\title{Artykuł o algorytmach kryprograficznych}
+\author{Misiak Adrian, Moskal Michał}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\secition*{Omówienie problemu}
+
+Algorytmy haszujące są wykorzysytwane do mapowania danych różnych rozmiarów na stałe długościowe wartośći, zwane haszami. Rozwiązuje one wiele problemó, w tym:
+
+\begin{itemize}
+    \item Unikalność: Pomagają w identyfikowaniu unikalnych elementó w dużych zbiorach danych.
+    \item Szybkie wyszukiwanie: Umożliwiają szybkie wyszukiwanie danych, ponieważ operacje na haszach są efektywne.
+    \item Zabezpieczenie: Stosowane są do zabezpieczenia danych poprzez generowanie haszy haseł, zapobiegając w ten sposób odczytaniu oryginalnej wartości.
+\end{itemize}
+
+Przykładem zastosowania algorytmów haszujących jest mechanizm przechowywania haseł w bazah danych, gdzie zamiast przechowywać hasło w formie tekstowej, przechowuje się jego hasz. Dzieki temu nawet jeśli baza danych zostanie naruszona, atakujący nie będzie w stanie odczytać oryginalnych haseł.
+
+\section*{Omówienie kilku algorytmów}
+
+\subsection*{B-Crypt}
+\begin{itemize}
+    \item  \textbf{Zastosowanie:} B-Crypt jest stosowany głównie do bezpiecznego haszowania haseł w systemach uwierzytelniania.
+    \item \textbf{Działanie:} B-Crypt jest oparty na funkcji haszującej opartej na kluczach. Używa tajnego klucza do haszowania danych, co zapewnia silne zabezpieczenia.
+    \item  \textbf{Złożonośc haszowania:} O(2^k), gdzie k to złożonośc pracy, określająca ile rund haszowania zostanie wykonanych. Jest to zwykle stała wartość ustalona na etapie projektowania algorytmu.
+
+\end{itemize}
+    Przykładowa implementacja (w języku Python, wykorzystując bibliotekę bcrypt):
+\begin{verbatim}
+    import bcrypt
+
+    //Hashowanie hasla
+    password = b"my_password"
+    hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+    print(hashed_password)
+
+    //Weryfikacja hasla
+    entered_password = b"my_password"
+    if bcrypt.checkpw(entered_password, hashed_password):
+        print("Password match")
+    else:
+        print("Password does not match")
+\end{verbatim}
+    
+\subsection*{RSA (Rivest-Shamir-Adleman)}
+\begin{itemize}
+    \item \textbf{Zastosowanie:} RSA jest stosowany do szyfrowania i podpisywania cyfrowego w celu zapewnienia bezpiecznej lomunikacji internetowej, takiej jak HTTPS.
+    \item \textbf{Działanie:} RSA opiera się na problemie fakrotyzacji dyżych liczb pierwszych. Generuje się nim dwa klucze: publiczny i prywatny. Klucz publiczny jest używany do szyfrowania danych, podczas gdy klycz prywatny używany jest do ich deszyfrowania.
+    \item \textbf{Złożonośc haszowania:}Generowanie kluczy: O(n^3), gdzie n to długość klucza. Generowanie kluczy w RSA wymaga wykonywania operacji na dużych liczbach pierwszych, co prowadzi do złożoności trzeciego stopnia.
+\end{itemize}
+    Przykładowa implementacja (w języku Python, wykorzystując bibliotekę Crypto):
+\begin{verbatim}
+    from Crypto.PublicKey import RSA
+    from Crypto.Cipher import PKCS1_OAEP
+
+    //Generowanie kluczy
+    key = RSA.generate(2048)
+    private_key = key.export_key()
+    public_key = key.publickey().export_key()
+
+    //Szyfrowanie danych
+    cipher = PKCS1_OAEP.new(RSA.import_key(public_key))
+    encrypted_data = cipher.encrypt(b"Hello, world!")
+    print(encrypted_data)
+
+    //Deszyfrowanie danych
+    cipher = PKCS1_OAEP.new(RSA.import_key(private_key))
+    decrypted_data = cipher.decrypt(encrypted_data)
+    print(decrypted_data)
+\end{verbatim}
+
+\subsection*{AES (Advanced Encryption Standard)}
+\begin{itemize}
+    \item \textbf{Zastosowanie:} AES jest jednym z najczęsciej używanych algorytmów szyfrowania symetrycznego. Jest szeroko stosowany w zabezpieczeniu danych, takich jak hasła, karty kredytowe czy poufne dokumenty.
+    \item \textbf{Działanie:} AES działa na blokach danych o stałej długości i wykorzystuje klucz do szyfrowania i deszyfrowania danych.
+    \item \textbf{Złożonośc haszowania:}Złożoność szyfrowania: O(1) - złożoność stała, ponieważ szyfrowanie bloku danych wymaga stałej liczby operacji niezależnie od długości danych wejściowych.
+\end{itemize}
+    Przykładowa implementacja (w języku Python, wykorzystując bibliotekę PyCryptodome): 
+\begin{verbatim}
+    from Crypto.Cipher import AES
+    from Crypto.Random import get_random_bytes
+
+    //Generowanie klucza
+    key = get_random_bytes(16)
+
+    //Szyfrowanie danych
+    cipher = AES.new(key, AES.MODE_ECB)
+    plaintext = b'Hello, world!'
+    ciphertext = cipher.encrypt(plaintext)
+    print(ciphertext)
+
+    //Deszyfrowanie danych
+    decrypted_data = cipher.decrypt(ciphertext)
+    print(decrypted_data)
+\end{verbatim}
+
+\subsection*{SHA-256 (Secure Hash Algorithm 256-bit)}
+\begin{itemize}
+    \item \textbf{Zastosowanie:} SHA-256 jest często stosowanym algorytmem haszowania. Jest używany do generowania wartości skrótu, które można wykorzystać do weryfikacji integralności danych lub do bezpiecznego przechowywania haseł.
+    \item \textbf{Działanie:} SHA-256 przekształca dane wejściowe o róznej długośći na stały skrót o długości 256 bitów.
+    \item \textbf{Złożonośc haszowania:}Złożoność szyfrowania: O(1) - złożoność stała, ponieważ szyfrowanie bloku danych wymaga stałej liczby operacji niezależnie od długości danych wejściowych.
+\end{itemize}
+Przykładowa implementacja (w języku Python, wykorzystując bibliotekę hashlib):
+\begin{verbatim}
+    import hashlib
+
+    Generowanie skrótu
+    data = b'Hello, world!'
+    hashed_data = hashlib.sha256(data).hexdigest()
+    print(hashed_data)
+\end{verbatim}
+
+\subsection*{Diffie-Hellman (DH)}
+\begin{itemize}
+    \item \textbf{Zastosowanie:} Protokół Diffie-Hellman jest używany do bezpiecznego wymiany kluczy kryptograficznych pomiędzy dwoma stronami w sposób, który zapewnia tajność komunikacji.
+    \item \textbf{Działanie:} DH umożliwia dwóm stronom, nazywanym Alice i Bobem, uzyskanie wspólnego tajnego klucza, który może być następnie wykorzystany do szyfrowania i deszyfrowania komunikatów. Protokół ten opiera się na matematycznych operacjach modulo.
+    \item \textbf{Złożonośc haszowania:} O(1) - generowanie kluczy jest zazwyczaj operacją stałego czasu, ponieważ polega na wyborze losowych liczb w określonym zakresie.
+
+\end{itemize}
+Przykładowa implementacja (w języku Python):
+\begin{verbatim}
+    from Crypto.Util import number
+
+    //Wybór parametrów DH
+    p = number.getPrime(256)
+    g = 2
+
+    //Generowanie kluczy dla Alice i Boba
+    alice_private_key = number.getRandomRange(1, p - 1)
+    bob_private_key = number.getRandomRange(1, p - 1)
+    alice_public_key = pow(g, alice_private_key, p)
+    bob_public_key = pow(g, bob_private_key, p)
+
+    //Obliczanie wspólnego tajnego klucza
+    alice_shared_secret = pow(bob_public_key, alice_private_key, p)
+    bob_shared_secret = pow(alice_public_key, bob_private_key, p)
+
+    //Sprawdzenie, czy obie strony mają ten sam wspólny tajny klucz
+    assert alice_shared_secret == bob_shared_secret
+
+    print("Shared secret:", alice_shared_secret)
+\end{verbatim}
+
+\section*{Wnioski}
+
+\begin{itemize}
+    \item Złożoność obliczeniowa: Każdy algorytm ma inną złożoność obliczeniową, co ma wpływ na jego wydajność i szybkość działania.
+    \item Różnorodność zastosowań: ALgorytmy są używane w różnych obszarach kryptografii, od uwierzytelniania haseł po bezpieczną komunikację internetową.
+    \item Bezpieczeństwo vs. wydajność: Istnieje kompromis między bezpieczeństwem a wydajnością.
+    \item Rola kluczy kryptograficznych: Klucze są kluczowymi elementami w zapewnieniu bezpieczeństwa.
+    \item Dobór algorytmów: Ważne jests dopasowanie algorytmu do konkretnego zastosowania.
+\end{itemize}
+
+\section*{Referencje}
+\begin{itemize}
+    \item https://github.com/pyca/bcrypt/
+    \item https://www.geeksforgeeks.org/hashing-passwords-in-python-with-bcrypt/
+    \item https://pycryptodome.readthedocs.io/en/latest/
+    \item https://docs.python.org/3/library/hashlib.html
+    \item https://pycryptodome.readthedocs.io/en/latest/src/public_key/dh.html
+\end{itemize}
+
+\end{document}
